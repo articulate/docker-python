@@ -11,7 +11,7 @@ RUN bash /tmp/consul_template_install.sh && rm /tmp/consul_template_install.sh
 # UID and GID need to be hardcoded to 90001 to match the service user on the host instance for volume mounting
 RUN groupadd -g 90001 $SERVICE_USER && useradd -u 90001 --create-home --home /home/$SERVICE_USER --gid $SERVICE_USER --shell /bin/bash $SERVICE_USER
 
-ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh /wait-for-it.sh
+ADD https://raw.githubusercontent.com/articulate/docker-consul-template-bootstrap/master/wait-for-it.sh /wait-for-it.sh
 RUN chmod a+rx /wait-for-it.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
