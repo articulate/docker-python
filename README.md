@@ -18,6 +18,7 @@ Base Python Docker images.
 > 🌟 recommended image
 
 * __articulate/python:3.12__ 🌟
+* articulate/python:3.11
 
 ## Creating a new image
 
