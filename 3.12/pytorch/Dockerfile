@@ -1,4 +1,5 @@
 # tags=articulate/python:3.12-pytorch
+# platforms=linux/amd64
 # syntax=docker/dockerfile:1
 FROM python:3.12-slim-bookworm
 
