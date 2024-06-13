@@ -29,7 +29,8 @@ ENV CUDA_VERSION=12.1
 # Added to satisfy linter
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN CUDA_VERSION_SANITIZED="$(echo $CUDA_VERSION | tr -d '.')" \
-    && pip install --no-cache-dir torch=="${PYTORCH_VERSION}" torchaudio=="${PYTORCH_VERSION}" torchvision=="${TORCHVISION_VERSION}" --index-url "https://download.pytorch.org/whl/cu${CUDA_VERSION_SANITIZED}"
+    && pip install --no-cache-dir torch=="${PYTORCH_VERSION}" torchaudio=="${PYTORCH_VERSION}" torchvision=="${TORCHVISION_VERSION}" \
+     --index-url "https://download.pytorch.org/whl/cu${CUDA_VERSION_SANITIZED}"
 
 USER $SERVICE_USER
 WORKDIR $SERVICE_ROOT

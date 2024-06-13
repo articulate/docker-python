@@ -47,13 +47,21 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Set build platform
+        id: set-platform
+        run: |
+          if [[ ${{ matrix.dockerfile }} == *"3.12-pytorch/Dockerfile"* ]]; then
+            echo "platforms=linux/amd64" >> "$GITHUB_ENV"
+          else
+            echo "platforms=linux/amd64,linux/arm64/v8" >> "$GITHUB_ENV"
+          fi
       - uses: docker/build-push-action@v5
         with:
           context: ${{ steps.meta.outputs.context }}
           pull: ${{ github.event_name != 'pull_request' }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
-          platforms: linux/amd64,linux/arm64/v8
+          platforms: ${{ env.platforms }}
           cache-from: type=registry,ref=${{ steps.meta.outputs.cache }}
           cache-to: type=inline
           no-cache: ${{ github.event.schedule == '0 0 * * 0' || (github.event_name == 'workflow_dispatch' && inputs.no-cache) }}
