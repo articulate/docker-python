@@ -17,7 +17,9 @@ Base Python Docker images.
 
 > 🌟 recommended image
 
-* __articulate/python:3.12__ 🌟
+* __articulate/python:3.13__ 🌟
+  > pytorch, torchvision for 3.13 not yet available
+* articulate/python:3.12
 * articulate/python:3.12-pytorch
 * articulate/python:3.11
 
