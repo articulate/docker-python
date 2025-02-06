@@ -3,9 +3,7 @@
 # syntax=docker/dockerfile:1
 FROM python:3.12-slim-bookworm
 
-ENV SERVICE_ROOT /service
-ENV SERVICE_USER service
-ENV SERVICE_UID 1001
+ENV SERVICE_ROOT=/service SERVICE_USER=service SERVICE_UID=1001
 
 ARG TARGETARCH
 
@@ -22,9 +20,7 @@ ADD --chmod=755 https://raw.githubusercontent.com/vishnubob/wait-for-it/81b1373f
 
 # Environment variables for PyTorch version and CUDA version
 # Set build arguments for PyTorch version
-ENV PYTORCH_VERSION=2.3.1
-ENV TORCHVISION_VERSION=0.18.1
-ENV CUDA_VERSION=12.1
+ENV PYTORCH_VERSION=2.3.1 TORCHVISION_VERSION=0.18.1 CUDA_VERSION=12.1
 
 # Install PyTorch
 # Added to satisfy linter
