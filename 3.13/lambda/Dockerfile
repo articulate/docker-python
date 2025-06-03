@@ -1,0 +1,27 @@
+# tags=articulate/python:3.13-lambda
+# syntax=docker/dockerfile:1
+FROM amazon/aws-lambda-python:3.13
+
+ENV AWS_DEFAULT_REGION=us-east-1 SERVICE_ROOT=/service SERVICE_USER=service SERVICE_UID=1001
+
+ARG TARGETARCH
+
+# hadolint ignore=DL3041
+RUN dnf -y install make zip shadow-utils \
+    # Add service user
+    && /usr/sbin/groupadd --gid $SERVICE_UID $SERVICE_USER \
+    && /usr/sbin/useradd --create-home --shell /bin/bash --uid $SERVICE_UID --gid $SERVICE_UID $SERVICE_USER \
+    # clean up
+    && dnf -y remove shadow-utils \
+    && dnf clean all
+
+ADD --chmod=755 https://github.com/articulate/docker-bootstrap/releases/latest/download/docker-bootstrap_linux_${TARGETARCH} /entrypoint
+ADD --chmod=755 https://raw.githubusercontent.com/articulate/docker-bootstrap/main/scripts/docker-secrets /usr/local/bin/secrets
+
+USER $SERVICE_USER
+WORKDIR $SERVICE_ROOT
+
+# Our entrypoint will pull in our environment variables from Consul and Vault,
+# and execute whatever command we provided the container.
+# See https://github.com/articulate/docker-bootstrap
+ENTRYPOINT [ "/entrypoint" ]
