@@ -13,21 +13,21 @@ ADD --chmod=644 https://truststore.pki.rds.amazonaws.com/global/global-bundle.pe
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN install_packages make dumb-init ca-certificates && /tmp/awscli.sh && rm /tmp/awscli.sh \
-  # Install Node.js
-  && install_packages curl gnupg \
-  && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
-  && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_24.x nodistro main" > /etc/apt/sources.list.d/nodesource.list \
-  && install_packages nodejs=24.16.0-1nodesource1 \
-  && apt-get remove -y curl gnupg \
-  # Create our own user and remove the node user
-  && groupadd --gid $SERVICE_UID $SERVICE_USER \
-  && useradd --create-home --shell /bin/bash --gid $SERVICE_UID --uid $SERVICE_UID $SERVICE_USER \
-  # Split PEM bundle into individual cert files for update-ca-certificates
-  && csplit -s -z -n 3 -f /usr/local/share/ca-certificates/aws-rds-ca- \
-  /usr/local/share/ca-certificates/aws-rds-global-bundle.pem  \
-  '/-----BEGIN CERTIFICATE-----/' '{*}' \
-  && for f in /usr/local/share/ca-certificates/aws-rds-ca-*; do mv "$f" "$f.crt"; done \
-  && update-ca-certificates
+    # Install Node.js
+    && install_packages curl gnupg \
+    && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
+    && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_24.x nodistro main" > /etc/apt/sources.list.d/nodesource.list \
+    && install_packages nodejs \
+    && apt-get remove -y curl gnupg \
+    # Create our own user and remove the node user
+    && groupadd --gid $SERVICE_UID $SERVICE_USER \
+    && useradd --create-home --shell /bin/bash --gid $SERVICE_UID --uid $SERVICE_UID $SERVICE_USER \
+    # Split PEM bundle into individual cert files for update-ca-certificates
+    && csplit -s -z -n 3 -f /usr/local/share/ca-certificates/aws-rds-ca- \
+      /usr/local/share/ca-certificates/aws-rds-global-bundle.pem  \
+      '/-----BEGIN CERTIFICATE-----/' '{*}' \
+    && for f in /usr/local/share/ca-certificates/aws-rds-ca-*; do mv "$f" "$f.crt"; done \
+    && update-ca-certificates
 
 ADD --chmod=755 https://github.com/articulate/docker-bootstrap/releases/latest/download/docker-bootstrap_linux_${TARGETARCH} /entrypoint
 ADD --chmod=755 https://raw.githubusercontent.com/articulate/docker-bootstrap/main/scripts/docker-secrets /usr/local/bin/secrets
